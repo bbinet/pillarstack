@@ -122,7 +122,7 @@ In the above PillarStack configuration, given that test-1-dev minion is an
 amd64 platform running Debian Jessie, and which `roles` pillar is `["db"]`, the
 following `yaml`files would be merged in order:
   - `core.yml`
-  - `amd64.yml`
-  - `jessie.yml`
-  - `db.yml`
-  - `test-1-dev.yml`
+  - `osarchs/amd64.yml`
+  - `oscodenames/jessie.yml`
+  - `roles/db.yml`
+  - `minions/test-1-dev.yml`
