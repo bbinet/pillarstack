@@ -14,6 +14,9 @@ It supports the following features:
   - all these rendered files are then parsed as `yaml`
   - then all yaml dicts are merged in order with support for the following
     merging strategies: `merge-first`, `merge-last`, and `overwrite`
+  - stack config files can be matched based on `pillar`, `grains`, or `opts`
+    values, which make it possible to support kind of self-contained
+    environments
 
 Installing the pillarstack `ext_pillar` is as simple as dropping the stack.py
 file in the `<extensions_modules>/pillar` directory (no external python module
