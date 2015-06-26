@@ -67,3 +67,62 @@ Here is an example of such a configuration, which should speak by itself:
               - /path/to/stack2.cfg
           opts:custom:opt:
             value: /path/to/stack0.cfg
+
+## PillarStack configuration files
+
+The config files that are referenced in the above `ext_pillar` configuration
+are jinja2 templates which must render as a simple ordered list of `yaml` files
+that will then be merged to build pillar data.
+
+The path of these `yaml` files must be relative to the directory of the
+PillarStack config file.
+
+The following variables are available in jinja2 templating of PillarStack
+configuration files:
+  - `pillar`: the pillar data (as passed by Salt to our `ext_pillar` function)
+  - `minion_id`: the minion id ;-)
+  - `__opts__`: a dictionary of mostly Salt configuration options
+  - `__grains__`: a dictionary of the grains of the minion making this pillar
+    call
+  - `__salt__`: a dictionary of Salt module functions, useful so you don't have
+    to duplicate functions that already exist (note: runs on the master)
+So you can use all the power of jinja2 to build you list
+
+For example, you could have a PillarStack config file which looks like:
+
+    $ cat /path/to/stack/config.cfg
+    core.yml
+    osarchs/{{ __grains__['osarch'] }}.yml
+    oscodenames/{{ __grains__['oscodename'] }}.yml
+    {%- for role in pillar.get('roles', []) %}
+    roles/{{ role }}.yml
+    {%- endfor %}
+    minions/{{ minion_id }}.yml
+
+And the whole directory structure could look like:
+
+    $ tree /path/to/stack/
+    /path/to/stack/
+    ├── config.cfg
+    ├── core.yml
+    ├── osarchs/
+    │   ├── amd64.yml
+    │   └── armhf.yml
+    ├── oscodenames/
+    │   ├── wheezy.yml
+    │   └── jessie.yml
+    ├── roles/
+    │   ├── web.yml
+    │   └── db.yml
+    └── minions/
+        ├── test-1-dev.yml
+        └── test-2-dev.yml
+
+In the above PillarStack configuration, given that test-1-dev minion is an
+amd64 platform running Debian Jessie, and which `roles` pillar is `["db"]`, the
+following `yaml`files would be merged in order:
+  - `core.yml`
+  - `amd64.yml`
+  - `jessie.yml`
+  - `db.yml`
+  - `test-1-dev.yml`
