@@ -160,3 +160,42 @@ whole own pillar data, merged in order by PillarStack.
 So PillarStack `ext_pillar` returns the `stack` dict, the contents of which
 Salt takes care to merge in with all of the other pillars and finally return
 the whole pillar to the minion.
+
+## Merging strategies
+
+The way the data from a new `yaml_data` dict is merged with the existing
+`stack` data can be controlled by specifying a merging strategy. Right now
+this strategy can either be `merge-last` (the default), `merge-first`, or
+`overwrite`.
+
+Note that scalar values like strings, integers, booleans, etc. are always
+evaluated using the `overwrite` strategy (other strategies don`t make sense in
+that case).
+
+The merging strategy can be set by including a dict in the form of:
+
+    __: <merging strategy>
+
+as the first item of the dict or list.
+This allows fine grained control over the merging process.
+
+### `merge-last` (default) strategy
+
+If the `merge-last` strategy is selected (the default), then content of dict or
+list variables is merged recursively with previous definitions of this
+variable (similarly to the `recurse` salt `pillar_source_merging_strategy`)..
+This allows for extending previously defined data.
+
+### `merge-first` strategy
+
+If the `merge-first` strategy is selected, then the content of dict or list
+variables are swapped between the `yaml_data` and `stack` objects before being
+merged recursively with the `merge-last` previous strategy.
+
+### `overwrite` strategy
+
+If the `overwrite` strategy is selected, then the content of dict or list
+variables in `stack` is overwritten by the content of `yaml_data` dict.
+So this allows one to overwrite variables from previous definitions.
+
+
