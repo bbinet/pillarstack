@@ -228,3 +228,72 @@ being merged recursively with the ``merge-last`` previous strategy.
 If the ``overwrite`` strategy is selected, then the content of dict or list
 variables in ``stack`` is overwritten by the content of ``yaml_data`` dict.
 So this allows one to overwrite variables from previous definitions.
+
+Merging examples
+----------------
+
+Let's go through small examples that should clarify what's going on when a
+``yaml_data`` dict is merged in the ``stack`` dict.
+
+When you don't specify any strategy, the default ``merge-last`` strategy is
+selected:
+
++----------------------+-----------------------+-------------------------+
+| ``stack``            | ``yaml_data``         | ``stack`` (after merge) |
++======================+=======================+=========================+
+| .. code:: yaml       | .. code:: yaml        | .. code:: yaml          |
+|                      |                       |                         |
+|     users:           |     users:            |     users:              |
+|       tom:           |       tom:            |       tom:              |
+|         uid: 500     |         uid: 1000     |         uid: 1000       |
+|         roles:       |         roles:        |         roles:          |
+|           - sysadmin |           - developer |           - sysadmin    |
+|        root:         |       mat:            |           - developer   |
+|          uid: 0      |         uid: 1001     |       mat:              |
+|                      |                       |         uid: 1001       |
+|                      |                       |       root:             |
+|                      |                       |         uid: 0          |
++----------------------+-----------------------+-------------------------+
+
+Then you can specify the merging strategy to select using the ``__`` key:
+
++----------------------+-----------------------+-------------------------+
+| ``stack``            | ``yaml_data``         | ``stack`` (after merge) |
++======================+=======================+=========================+
+| .. code:: yaml       | .. code:: yaml        | .. code:: yaml          |
+|                      |                       |                         |
+|     users:           |     users:            |     users:              |
+|       tom:           |       __: merge-last  |       tom:              |
+|         uid: 500     |       tom:            |         uid: 1000       |
+|         roles:       |         uid: 1000     |         roles:          |
+|           - sysadmin |         roles:        |           - sysadmin    |
+|        root:         |           - developer |           - developer   |
+|          uid: 0      |       mat:            |       mat:              |
+|                      |         uid: 1001     |         uid: 1001       |
+|                      |                       |       root:             |
+|                      |                       |         uid: 0          |
++----------------------+-----------------------+-------------------------+
+| .. code:: yaml       | .. code:: yaml        | .. code:: yaml          |
+|                      |                       |                         |
+|     users:           |     users:            |     users:              |
+|       tom:           |       __: merge-first |       tom:              |
+|         uid: 500     |       tom:            |         uid: 500        |
+|         roles:       |         uid: 1000     |         roles:          |
+|           - sysadmin |         roles:        |           - developer   |
+|        root:         |           - developer |           - sysadmin    |
+|          uid: 0      |       mat:            |       mat:              |
+|                      |         uid: 1001     |         uid: 1001       |
+|                      |                       |       root:             |
+|                      |                       |         uid: 0          |
++----------------------+-----------------------+-------------------------+
+| .. code:: yaml       | .. code:: yaml        | .. code:: yaml          |
+|                      |                       |                         |
+|     users:           |     users:            |     users:              |
+|       tom:           |       __: overwrite   |       tom:              |
+|         uid: 500     |       tom:            |         uid: 1000       |
+|         roles:       |         uid: 1000     |         roles:          |
+|           - sysadmin |         roles:        |           - developer   |
+|        root:         |           - developer |       mat:              |
+|          uid: 0      |       mat:            |         uid: 1001       |
+|                      |         uid: 1001     |                         |
++----------------------+-----------------------+-------------------------+
