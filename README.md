@@ -86,7 +86,9 @@ configuration files:
     call
   - `__salt__`: a dictionary of Salt module functions, useful so you don't have
     to duplicate functions that already exist (note: runs on the master)
-So you can use all the power of jinja2 to build you list
+
+So you can use all the power of jinja2 to build your list of `yaml` files that
+will be merged in pillar data.
 
 For example, you could have a PillarStack config file which looks like:
 
@@ -118,9 +120,11 @@ And the whole directory structure could look like:
         ├── test-1-dev.yml
         └── test-2-dev.yml
 
+## Overall process and merging strategies
+
 In the above PillarStack configuration, given that test-1-dev minion is an
-amd64 platform running Debian Jessie, and which `roles` pillar is `["db"]`, the
-following `yaml`files would be merged in order:
+amd64 platform running Debian Jessie, and which pillar `roles` is `["db"]`, the
+following `yaml` files would be merged in order:
   - `core.yml`
   - `osarchs/amd64.yml`
   - `oscodenames/jessie.yml`
