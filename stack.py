@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
+from functools import partial
 
 import yaml
 from jinja2 import FileSystemLoader, Environment, TemplateNotFound
+import salt.utils
 
 
 log = logging.getLogger(__name__)
@@ -13,7 +15,25 @@ strategies = ('overwrite', 'merge-first', 'merge-last')
 def ext_pillar(minion_id, pillar, *args, **kwargs):
     stack = {}
     stack_config_files = list(args)
+    traverse = {
+        'pillar': partial(salt.utils.traverse_dict_and_list, pillar),
+        'grains': partial(salt.utils.traverse_dict_and_list, __grains__),
+        'opts': partial(salt.utils.traverse_dict_and_list, __opts__),
+        }
+    for matcher, matchs in kwargs.iteritems():
+        t, matcher = matcher.split(':', 1)
+        if t not in traverse:
+            raise Exception('Unknow traverse option "%s", should be one of %s'
+                            % (t, str(traverse.keys())))
+        cfgs = matchs.get(traverse[t](matcher, None), [])
+        if not isinstance(cfgs, list):
+            cfgs = [cfgs]
+        stack_config_files += cfgs
     for cfg in stack_config_files:
+        if not os.path.isfile(cfg):
+            log.warn('Ignoring pillar stack cfg "%s": file does not exist'
+                     % cfg)
+            continue
         stack = _process_stack_cfg(cfg, stack, minion_id, pillar)
     return stack
 
