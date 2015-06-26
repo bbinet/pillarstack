@@ -120,7 +120,7 @@ And the whole directory structure could look like:
         ├── test-1-dev.yml
         └── test-2-dev.yml
 
-## Overall process and merging strategies
+## Overall process
 
 In the above PillarStack configuration, given that test-1-dev minion is an
 amd64 platform running Debian Jessie, and which pillar `roles` is `["db"]`, the
@@ -130,3 +130,33 @@ following `yaml` files would be merged in order:
   - `oscodenames/jessie.yml`
   - `roles/db.yml`
   - `minions/test-1-dev.yml`
+
+Before merging, every files above will be preprocessed as Jinja2 templates.
+The following variables are available in Jinja2 templating of `yaml` files:
+  - `stack`: the PillarStack pillar data object that has currently been merged
+    (data from previous `yaml` files in PillarStack configuration)
+  - `pillar`: the pillar data (as passed by Salt to our `ext_pillar` function)
+  - `minion_id`: the minion id ;-)
+  - `__opts__`: a dictionary of mostly Salt configuration options
+  - `__grains__`: a dictionary of the grains of the minion making this pillar
+    call
+  - `__salt__`: a dictionary of Salt module functions, useful so you don't have
+    to duplicate functions that already exist (note: runs on the master)
+
+So you can use all the power of jinja2 to build your pillar data, and even use
+other pillar values that has already been merged by PillarStack (from previous
+`yaml` files in PillarStack configuration) through the `stack` variable.
+
+Once a `yaml` file has been preprocessed by Jinja2, we obtain a Python dict -
+let's call it `yml_data` - then, PillarStack will merge this `yml_data` dict
+in the main `stack` dict (which contains already merged PillarStack pillar
+data).
+By default, PillarStack will deeply merge `yml_data` in `stack` (similarly to
+the `recurse` salt `pillar_source_merging_strategy`), but 3 merging strategies
+are currently available for you to choose (see next section).
+
+Once every `yaml` files have been processed, the `stack` dict will contain your
+whole own pillar data, merged in order by PillarStack.
+So PillarStack `ext_pillar` returns the `stack` dict, the contents of which
+Salt takes care to merge in with all of the other pillars and finally return
+the whole pillar to the minion.
