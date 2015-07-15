@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import os
 import logging
 from functools import partial
@@ -23,16 +24,16 @@ def ext_pillar(minion_id, pillar, *args, **kwargs):
     for matcher, matchs in kwargs.iteritems():
         t, matcher = matcher.split(':', 1)
         if t not in traverse:
-            raise Exception('Unknow traverse option "%s", should be one of %s'
-                            % (t, str(traverse.keys())))
+            raise Exception('Unknown traverse option "{0}", '
+                            'should be one of {1}'.format(t, traverse.keys()))
         cfgs = matchs.get(traverse[t](matcher, None), [])
         if not isinstance(cfgs, list):
             cfgs = [cfgs]
         stack_config_files += cfgs
     for cfg in stack_config_files:
         if not os.path.isfile(cfg):
-            log.warn('Ignoring pillar stack cfg "%s": file does not exist'
-                     % cfg)
+            log.warn('Ignoring pillar stack cfg "{0}": '
+                     'file does not exist'.format(cfg))
             continue
         stack = _process_stack_cfg(cfg, stack, minion_id, pillar)
     return stack
@@ -53,8 +54,8 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
             obj = yaml.safe_load(jenv.get_template(path).render(stack=stack))
             stack = _merge_dict(stack, obj)
         except TemplateNotFound:
-            log.info('Ignoring pillar stack template "%s": can\'t find from '
-                     'root dir "%s"' % (path, basedir))
+            log.info('Ignoring pillar stack template "{0}": can\'t find from '
+                     'root dir "{1}"'.format(path, basedir))
             continue
     return stack
 
@@ -70,12 +71,12 @@ def _cleanup(obj):
             del obj[0]
     return obj
 
-    
+
 def _merge_dict(stack, obj):
     strategy = obj.pop('__', 'merge-last')
     if strategy not in strategies:
-        raise Exception('Unknow strategy "%s", should be one of %s'
-                        % (strategy, str(strategies)))
+        raise Exception('Unknown strategy "{0}", should be one of {1}'.format(
+            strategy, strategies))
     if strategy == 'overwrite':
         return _cleanup(obj)
     else:
@@ -88,8 +89,8 @@ def _merge_dict(stack, obj):
                     stack[k] = _cleanup(v)
                     v = stack_k
                 if type(stack[k]) != type(v):
-                    log.debug('Force overwrite, types differ: %s != %s'
-                              % (repr(stack[k]), repr(v)))
+                    log.debug('Force overwrite, types differ: '
+                              '{0!r} != {1!r}'.format(stack[k], v))
                     stack[k] = _cleanup(v)
                 elif isinstance(v, dict):
                     stack[k] = _merge_dict(stack[k], v)
@@ -108,8 +109,8 @@ def _merge_list(stack, obj):
         strategy = obj[0]['__']
         del obj[0]
     if strategy not in strategies:
-        raise Exception('Unknow strategy "%s", should be one of %s'
-                        % (strategy, str(strategies)))
+        raise Exception('Unknown strategy "{0}", should be one of {1}'.format(
+            strategy, strategies))
     if strategy == 'overwrite':
         return obj
     elif strategy == 'merge-first':
