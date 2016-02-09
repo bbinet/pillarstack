@@ -266,7 +266,8 @@ selected:
 |                      |                       |         uid: 0          |
 +----------------------+-----------------------+-------------------------+
 
-Then you can specify the merging strategy to select using the ``__`` key:
+Then you can specify the merging strategy to select using the ``__`` key in a
+dict:
 
 +----------------------+-----------------------+-------------------------+
 | ``stack``            | ``yaml_data``         | ``stack`` (after merge) |
@@ -318,3 +319,37 @@ Then you can specify the merging strategy to select using the ``__`` key:
 |         uid: 0       |       mat:            |         uid: 1001       |
 |                      |         uid: 1001     |                         |
 +----------------------+-----------------------+-------------------------+
+
+You can also select a merging strategy using a ``__`` object in a list:
+
++----------------+-------------------------+-------------------------+
+| ``stack``      | ``yaml_data``           | ``stack`` (after merge) |
++================+=========================+=========================+
+| .. code:: yaml | .. code:: yaml          | .. code:: yaml          |
+|                |                         |                         |
+|     users:     |     users:              |     users:              |
+|       - tom    |       - __: merge-last  |       - tom             |
+|       - root   |       - mat             |       - root            |
+|                |                         |       - mat             |
++----------------+-------------------------+-------------------------+
+| .. code:: yaml | .. code:: yaml          | .. code:: yaml          |
+|                |                         |                         |
+|     users:     |     users:              |     users:              |
+|       - tom    |       - __: merge-first |       - mat             |
+|       - root   |       - mat             |       - tom             |
+|                |                         |       - root            |
++----------------+-------------------------+-------------------------+
+| .. code:: yaml | .. code:: yaml          | .. code:: yaml          |
+|                |                         |                         |
+|     users:     |     users:              |     users:              |
+|       - tom    |       - __: remove      |       - root            |
+|       - root   |       - mat             |                         |
+|                |       - tom             |                         |
++----------------+-------------------------+-------------------------+
+| .. code:: yaml | .. code:: yaml          | .. code:: yaml          |
+|                |                         |                         |
+|     users:     |     users:              |     users:              |
+|       - tom    |       - __: overwrite   |       - mat             |
+|       - root   |       - mat             |                         |
+|                |                         |                         |
++----------------+-------------------------+-------------------------+
