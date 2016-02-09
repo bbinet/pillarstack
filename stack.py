@@ -9,7 +9,7 @@ from jinja2 import FileSystemLoader, Environment, TemplateNotFound
 
 
 log = logging.getLogger(__name__)
-strategies = ('overwrite', 'merge-first', 'merge-last')
+strategies = ('overwrite', 'merge-first', 'merge-last', 'remove')
 
 
 def ext_pillar(minion_id, pillar, *args, **kwargs):
@@ -85,6 +85,9 @@ def _merge_dict(stack, obj):
         return _cleanup(obj)
     else:
         for k, v in obj.iteritems():
+            if strategy == 'remove':
+                stack.pop(k, None)
+                continue
             if k in stack:
                 if strategy == 'merge-first':
                     # merge-first is same as merge-last but the other way round
@@ -117,6 +120,8 @@ def _merge_list(stack, obj):
             strategy, strategies))
     if strategy == 'overwrite':
         return obj
+    elif strategy == 'remove':
+        return [item for item in stack if item not in obj]
     elif strategy == 'merge-first':
         return obj + stack
     else:

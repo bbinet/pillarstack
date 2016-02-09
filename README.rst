@@ -15,7 +15,8 @@ It supports the following features:
   ``stack``, ``pillar``, ``__grains__``, ``__salt__``, ``__opts__`` objects
 - all these rendered files are then parsed as ``yaml``
 - then all yaml dicts are merged in order with support for the following
-  merging strategies: ``merge-first``, ``merge-last``, and ``overwrite``
+  merging strategies: ``merge-first``, ``merge-last``, ``remove``, and
+  ``overwrite``
 - stack config files can be matched based on ``pillar``, ``grains``, or
   ``opts`` values, which make it possible to support kind of self-contained
   environments
@@ -192,11 +193,11 @@ Merging strategies
 
 The way the data from a new ``yaml_data`` dict is merged with the existing
 ``stack`` data can be controlled by specifying a merging strategy. Right now
-this strategy can either be ``merge-last`` (the default), ``merge-first``, or
-``overwrite``.
+this strategy can either be ``merge-last`` (the default), ``merge-first``,
+``remove``, or ``overwrite``.
 
 Note that scalar values like strings, integers, booleans, etc. are always
-evaluated using the ``overwrite`` strategy (other strategies don``t make sense
+evaluated using the ``overwrite`` strategy (other strategies don't make sense
 in that case).
 
 The merging strategy can be set by including a dict in the form of:
@@ -223,6 +224,14 @@ This allows for extending previously defined data.
 If the ``merge-first`` strategy is selected, then the content of dict or list
 variables are swapped between the ``yaml_data`` and ``stack`` objects before
 being merged recursively with the ``merge-last`` previous strategy.
+
+``remove`` strategy
+~~~~~~~~~~~~~~~~~~~
+
+If the ``remove`` strategy is selected, then content of dict or list variables
+in ``stack`` are removed only if the correponding item is present in the
+``yaml_data`` dict.
+This allows for removing items from previously defined data.
 
 ``overwrite`` strategy
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -287,6 +296,16 @@ Then you can specify the merging strategy to select using the ``__`` key:
 |                      |         uid: 1001     |         uid: 1001       |
 |                      |                       |       root:             |
 |                      |                       |         uid: 0          |
++----------------------+-----------------------+-------------------------+
+| .. code:: yaml       | .. code:: yaml        | .. code:: yaml          |
+|                      |                       |                         |
+|     users:           |     users:            |     users:              |
+|       tom:           |       __: remove      |       root:             |
+|         uid: 500     |       tom:            |         uid: 0          |
+|         roles:       |       mat:            |                         |
+|           - sysadmin |                       |                         |
+|       root:          |                       |                         |
+|         uid: 0       |                       |                         |
 +----------------------+-----------------------+-------------------------+
 | .. code:: yaml       | .. code:: yaml        | .. code:: yaml          |
 |                      |                       |                         |
