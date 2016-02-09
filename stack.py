@@ -6,7 +6,6 @@ from functools import partial
 
 import yaml
 from jinja2 import FileSystemLoader, Environment, TemplateNotFound
-import salt.utils
 
 
 log = logging.getLogger(__name__)
@@ -14,6 +13,7 @@ strategies = ('overwrite', 'merge-first', 'merge-last')
 
 
 def ext_pillar(minion_id, pillar, *args, **kwargs):
+    import salt.utils
     stack = {}
     stack_config_files = list(args)
     traverse = {
