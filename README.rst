@@ -250,8 +250,8 @@ selected:
 |         uid: 500     |         uid: 1000     |         uid: 1000       |
 |         roles:       |         roles:        |         roles:          |
 |           - sysadmin |           - developer |           - sysadmin    |
-|        root:         |       mat:            |           - developer   |
-|          uid: 0      |         uid: 1001     |       mat:              |
+|       root:          |       mat:            |           - developer   |
+|         uid: 0       |         uid: 1001     |       mat:              |
 |                      |                       |         uid: 1001       |
 |                      |                       |       root:             |
 |                      |                       |         uid: 0          |
@@ -269,8 +269,8 @@ Then you can specify the merging strategy to select using the ``__`` key:
 |         uid: 500     |       tom:            |         uid: 1000       |
 |         roles:       |         uid: 1000     |         roles:          |
 |           - sysadmin |         roles:        |           - sysadmin    |
-|        root:         |           - developer |           - developer   |
-|          uid: 0      |       mat:            |       mat:              |
+|       root:          |           - developer |           - developer   |
+|         uid: 0       |       mat:            |       mat:              |
 |                      |         uid: 1001     |         uid: 1001       |
 |                      |                       |       root:             |
 |                      |                       |         uid: 0          |
@@ -282,8 +282,8 @@ Then you can specify the merging strategy to select using the ``__`` key:
 |         uid: 500     |       tom:            |         uid: 500        |
 |         roles:       |         uid: 1000     |         roles:          |
 |           - sysadmin |         roles:        |           - developer   |
-|        root:         |           - developer |           - sysadmin    |
-|          uid: 0      |       mat:            |       mat:              |
+|       root:          |           - developer |           - sysadmin    |
+|         uid: 0       |       mat:            |       mat:              |
 |                      |         uid: 1001     |         uid: 1001       |
 |                      |                       |       root:             |
 |                      |                       |         uid: 0          |
@@ -295,7 +295,7 @@ Then you can specify the merging strategy to select using the ``__`` key:
 |         uid: 500     |       tom:            |         uid: 1000       |
 |         roles:       |         uid: 1000     |         roles:          |
 |           - sysadmin |         roles:        |           - developer   |
-|        root:         |           - developer |       mat:              |
-|          uid: 0      |       mat:            |         uid: 1001       |
+|       root:          |           - developer |       mat:              |
+|         uid: 0       |       mat:            |         uid: 1001       |
 |                      |         uid: 1001     |                         |
 +----------------------+-----------------------+-------------------------+
