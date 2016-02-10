@@ -269,8 +269,7 @@ selected:
 |                      |                       |         uid: 0          |
 +----------------------+-----------------------+-------------------------+
 
-Then you can specify the merging strategy to select using the ``__`` key in a
-dict:
+Then you can select a custom merging strategy using the ``__`` key in a dict:
 
 +----------------------+-----------------------+-------------------------+
 | ``stack``            | ``yaml_data``         | ``stack`` (after merge) |
@@ -323,7 +322,7 @@ dict:
 |                      |         uid: 1001     |                         |
 +----------------------+-----------------------+-------------------------+
 
-You can also select a merging strategy using a ``__`` object in a list:
+You can also select a custom merging strategy using a ``__`` object in a list:
 
 +----------------+-------------------------+-------------------------+
 | ``stack``      | ``yaml_data``           | ``stack`` (after merge) |
@@ -354,5 +353,4 @@ You can also select a merging strategy using a ``__`` object in a list:
 |     users:     |     users:              |     users:              |
 |       - tom    |       - __: overwrite   |       - mat             |
 |       - root   |       - mat             |                         |
-|                |                         |                         |
 +----------------+-------------------------+-------------------------+
