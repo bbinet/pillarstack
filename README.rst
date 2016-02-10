@@ -27,6 +27,12 @@ It supports the following features:
 Installation
 ------------
 
+PillarStack is already bundled with Salt since Boron version so there is
+nothing to install from version 2016.3.0.
+
+If you use an older Salt version or you want to override PillarStack with a
+more recent one, follow the installation procedure below.
+
 Installing the PillarStack ``ext_pillar`` is as simple as dropping the
 ``stack.py`` file in the ``<extensions_modules>/pillar`` directory (no external
 python module required), given that ``extensions_modules`` is set in your
