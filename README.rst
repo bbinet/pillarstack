@@ -1,6 +1,9 @@
 PillarStack
 ===========
 
+.. image:: https://travis-ci.org/bbinet/pillarstack.svg?branch=master
+    :target: https://travis-ci.org/bbinet/pillarstack
+
 This custom saltstack ``ext_pillar`` is inspired by
 `varstack <https://github.com/conversis/varstack>`_ but is heavily based on
 Jinja2 for maximum flexibility.
