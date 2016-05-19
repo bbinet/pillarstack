@@ -40,6 +40,7 @@ def ext_pillar(minion_id, pillar, *args, **kwargs):
 
 
 def _process_stack_cfg(cfg, stack, minion_id, pillar):
+    log.debug('Config: {0}'.format(cfg))
     basedir, filename = os.path.split(cfg)
     jenv = Environment(loader=FileSystemLoader(basedir))
     jenv.globals.update({
@@ -51,6 +52,7 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
         })
     for path in _parse_stack_cfg(jenv.get_template(filename).render(stack=stack)):
         try:
+            log.debug('YAML: basedir={0}, path={1}'.format(basedir, path))
             obj = yaml.safe_load(jenv.get_template(path).render(stack=stack))
             if not isinstance(obj, dict):
                 log.info('Ignoring pillar stack template "{0}": Can\'t parse '
