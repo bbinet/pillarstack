@@ -8,13 +8,14 @@ from glob import glob
 import yaml
 from jinja2 import FileSystemLoader, Environment, TemplateNotFound
 
+import salt.utils
+
 
 log = logging.getLogger(__name__)
 strategies = ('overwrite', 'merge-first', 'merge-last', 'remove')
 
 
 def ext_pillar(minion_id, pillar, *args, **kwargs):
-    import salt.utils
     stack = {}
     stack_config_files = list(args)
     traverse = {
@@ -48,6 +49,7 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
         "__opts__": __opts__,
         "__salt__": __salt__,
         "__grains__": __grains__,
+        "__stack__": { 'traverse': salt.utils.traverse_dict_and_list },
         "minion_id": minion_id,
         "pillar": pillar,
         })
