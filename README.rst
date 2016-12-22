@@ -4,9 +4,17 @@ PillarStack
 .. image:: https://travis-ci.org/bbinet/pillarstack.svg?branch=master
     :target: https://travis-ci.org/bbinet/pillarstack
 
-This custom saltstack ``ext_pillar`` is inspired by
-`varstack <https://github.com/conversis/varstack>`_ but is heavily based on
-Jinja2 for maximum flexibility.
+Simple and flexible YAML ext_pillar which can read pillar from within pillar.
+
+.. versionadded:: 2016.3.0
+
+`PillarStack <https://github.com/bbinet/pillarstack>`_ is a custom saltstack
+``ext_pillar`` which was inspired by `varstack
+<https://github.com/conversis/varstack>`_ but is heavily based on Jinja2 for
+maximum flexibility.
+
+Any issue should be reported to the upstream project at:
+https://github.com/bbinet/pillarstack/issues
 
 It supports the following features:
 
@@ -27,7 +35,7 @@ It supports the following features:
 Installation
 ------------
 
-PillarStack is already bundled with Salt since Boron version so there is
+PillarStack is already bundled with Salt since 2016.3.0 version so there is
 nothing to install from version 2016.3.0.
 
 If you use an older Salt version or you want to override PillarStack with a
@@ -73,8 +81,8 @@ You can also provide a list of config files:
 Select config files through grains|pillar|opts matching
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can also opt for a much more flexible configuration: PillarStack allows to
-select the config files for the current minion based on matching values from
+You can also opt for a much more flexible configuration: PillarStack allows one
+to select the config files for the current minion based on matching values from
 either grains, or pillar, or opts objects.
 
 Here is an example of such a configuration, which should speak by itself:
