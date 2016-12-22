@@ -53,6 +53,8 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
         })
     for item in _parse_stack_cfg(
             jenv.get_template(filename).render(stack=stack)):
+        if not item.strip():
+            continue  # silently ignore whitespace or empty lines
         paths = glob(os.path.join(basedir, item))
         if not paths:
             log.warn('Ignoring pillar stack template "{0}": can\'t find from '
