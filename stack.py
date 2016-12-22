@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import os
 import logging
 from functools import partial
+from glob import glob
 
 import yaml
 from jinja2 import FileSystemLoader, Environment, TemplateNotFound
@@ -50,19 +51,22 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
         "minion_id": minion_id,
         "pillar": pillar,
         })
-    for path in _parse_stack_cfg(jenv.get_template(filename).render(stack=stack)):
-        try:
+    for item in _parse_stack_cfg(
+            jenv.get_template(filename).render(stack=stack)):
+        paths = glob(os.path.join(basedir, item))
+        if not paths:
+            log.warn('Ignoring pillar stack template "{0}": can\'t find from '
+                     'root dir "{1}"'.format(item, basedir))
+            continue
+        for path in sorted(paths):
             log.debug('YAML: basedir={0}, path={1}'.format(basedir, path))
-            obj = yaml.safe_load(jenv.get_template(path).render(stack=stack))
+            obj = yaml.safe_load(jenv.get_template(
+                    os.path.relpath(path, basedir)).render(stack=stack))
             if not isinstance(obj, dict):
                 log.info('Ignoring pillar stack template "{0}": Can\'t parse '
                          'as a valid yaml dictionnary'.format(path))
                 continue
             stack = _merge_dict(stack, obj)
-        except TemplateNotFound:
-            log.info('Ignoring pillar stack template "{0}": can\'t find from '
-                     'root dir "{1}"'.format(path, basedir))
-            continue
     return stack
 
 
