@@ -101,7 +101,9 @@ are jinja2 templates which must render as a simple ordered list of ``yaml``
 files that will then be merged to build pillar data.
 
 The path of these ``yaml`` files must be relative to the directory of the
-PillarStack config file.
+PillarStack config file. These paths support unix style pathname pattern
+expansion through the
+`Python glob module <https://docs.python.org/2/library/glob.html>`.
 
 The following variables are available in jinja2 templating of PillarStack
 configuration files:
@@ -124,6 +126,7 @@ For example, you could have a PillarStack config file which looks like:
 
     $ cat /path/to/stack/config.cfg
     core.yml
+    common/*.yml
     osarchs/{{ __grains__['osarch'] }}.yml
     oscodenames/{{ __grains__['oscodename'] }}.yml
     {%- for role in pillar.get('roles', []) %}
@@ -139,6 +142,9 @@ And the whole directory structure could look like:
     /path/to/stack/
     ├── config.cfg
     ├── core.yml
+    ├── common/
+    │   ├── xxx.yml
+    │   └── yyy.yml
     ├── osarchs/
     │   ├── amd64.yml
     │   └── armhf.yml
@@ -160,6 +166,8 @@ amd64 platform running Debian Jessie, and which pillar ``roles`` is ``["db"]``,
 the following ``yaml`` files would be merged in order:
 
 - ``core.yml``
+- ``common/xxx.yml``
+- ``common/yyy.yml``
 - ``osarchs/amd64.yml``
 - ``oscodenames/jessie.yml``
 - ``roles/db.yml``
