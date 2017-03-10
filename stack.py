@@ -44,7 +44,7 @@ def ext_pillar(minion_id, pillar, *args, **kwargs):
 def _process_stack_cfg(cfg, stack, minion_id, pillar):
     log.debug('Config: {0}'.format(cfg))
     basedir, filename = os.path.split(cfg)
-    jenv = Environment(loader=FileSystemLoader(basedir), extensions=['jinja2.ext.do'])
+    jenv = Environment(loader=FileSystemLoader(basedir), extensions=['jinja2.ext.do', salt.utils.jinja.SerializerExtension])
     jenv.globals.update({
         "__opts__": __opts__,
         "__salt__": __salt__,
