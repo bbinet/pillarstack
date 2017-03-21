@@ -3,4 +3,6 @@ python:
   - "2.6"
   - "2.7"
 install: pip install salt-ssh docutils Pygments
-script: python test_stack.py
+script: 
+  - python test_stack.py
+  - python test_slashes.py
