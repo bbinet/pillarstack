@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Import Python libs
 from __future__ import absolute_import
 import os
 import posixpath
@@ -7,8 +8,10 @@ from functools import partial
 from glob import glob
 
 import yaml
-from jinja2 import FileSystemLoader, Environment, TemplateNotFound
+from jinja2 import FileSystemLoader, Environment
 
+# Import Salt libs
+import salt.ext.six as six
 import salt.utils
 
 
@@ -24,7 +27,7 @@ def ext_pillar(minion_id, pillar, *args, **kwargs):
         'grains': partial(salt.utils.traverse_dict_and_list, __grains__),
         'opts': partial(salt.utils.traverse_dict_and_list, __opts__),
         }
-    for matcher, matchs in kwargs.iteritems():
+    for matcher, matchs in six.iteritems(kwargs):
         t, matcher = matcher.split(':', 1)
         if t not in traverse:
             raise Exception('Unknown traverse option "{0}", '
@@ -35,7 +38,7 @@ def ext_pillar(minion_id, pillar, *args, **kwargs):
         stack_config_files += cfgs
     for cfg in stack_config_files:
         if not os.path.isfile(cfg):
-            log.warn('Ignoring pillar stack cfg "{0}": '
+            log.warning('Ignoring pillar stack cfg "{0}": '
                      'file does not exist'.format(cfg))
             continue
         stack = _process_stack_cfg(cfg, stack, minion_id, pillar)
@@ -59,7 +62,9 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
         "__opts__": __opts__,
         "__salt__": __salt__,
         "__grains__": __grains__,
-        "__stack__": { 'traverse': salt.utils.traverse_dict_and_list },
+        "__stack__": {
+            'traverse': salt.utils.traverse_dict_and_list
+            },
         "minion_id": minion_id,
         "pillar": pillar,
         })
@@ -69,7 +74,7 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
             continue  # silently ignore whitespace or empty lines
         paths = glob(os.path.join(basedir, item))
         if not paths:
-            log.warn('Ignoring pillar stack template "{0}": can\'t find from '
+            log.warning('Ignoring pillar stack template "{0}": can\'t find from '
                      'root dir "{1}"'.format(item, basedir))
             continue
         for path in sorted(paths):
@@ -79,7 +84,7 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
             obj = yaml.safe_load(jenv.get_template(unix_path).render(stack=stack))
             if not isinstance(obj, dict):
                 log.info('Ignoring pillar stack template "{0}": Can\'t parse '
-                         'as a valid yaml dictionnary'.format(path))
+                         'as a valid yaml dictionary'.format(path))
                 continue
             stack = _merge_dict(stack, obj)
     return stack
@@ -89,7 +94,7 @@ def _cleanup(obj):
     if obj:
         if isinstance(obj, dict):
             obj.pop('__', None)
-            for k, v in obj.iteritems():
+            for k, v in six.iteritems(obj):
                 obj[k] = _cleanup(v)
         elif isinstance(obj, list) and isinstance(obj[0], dict) \
                 and '__' in obj[0]:
@@ -105,7 +110,7 @@ def _merge_dict(stack, obj):
     if strategy == 'overwrite':
         return _cleanup(obj)
     else:
-        for k, v in obj.iteritems():
+        for k, v in six.iteritems(obj):
             if strategy == 'remove':
                 stack.pop(k, None)
                 continue
@@ -150,7 +155,9 @@ def _merge_list(stack, obj):
 
 
 def _parse_stack_cfg(content):
-    """Allow top level cfg to be YAML"""
+    '''
+    Allow top level cfg to be YAML
+    '''
     try:
         obj = yaml.safe_load(content)
         if isinstance(obj, list):
