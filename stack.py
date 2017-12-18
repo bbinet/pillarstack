@@ -81,7 +81,7 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
             log.debug('YAML: basedir={0}, path={1}'.format(basedir, path))
             # FileSystemLoader always expects unix-style paths
             unix_path = _to_unix_slashes(os.path.relpath(path, basedir))
-            obj = yaml.safe_load(jenv.get_template(unix_path).render(stack=stack))
+            obj = yaml.safe_load(jenv.get_template(unix_path).render(stack=stack, ymlpath=path ))
             if not isinstance(obj, dict):
                 log.info('Ignoring pillar stack template "{0}": Can\'t parse '
                          'as a valid yaml dictionary'.format(path))
