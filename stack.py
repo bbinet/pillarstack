@@ -75,7 +75,7 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
             continue  # silently ignore whitespace or empty lines
         paths = glob(os.path.join(basedir, item))
         if not paths:
-            log.warning('Ignoring pillar stack template "{0}": can\'t find from '
+            log.info('Ignoring pillar stack template "{0}": can\'t find from '
                      'root dir "{1}"'.format(item, basedir))
             continue
         for path in sorted(paths):
