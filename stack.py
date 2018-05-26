@@ -66,7 +66,8 @@ def _process_stack_cfg(cfg, stack, minion_id, pillar):
         })
     for item in _parse_stack_cfg(
             jenv.get_template(filename).render(stack=stack)):
-        if not item.strip():
+        item = item.strip()
+        if not item:
             continue  # silently ignore whitespace or empty lines
         paths = glob.glob(os.path.join(basedir, item))
         if not paths:
